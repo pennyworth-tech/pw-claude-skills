@@ -40,8 +40,8 @@ jobs:
             skill_name=$(dirname "$skill_file" | xargs basename)
             echo "Validating: $skill_name"
 
-            # Extract YAML frontmatter
-            frontmatter=$(sed -n '/^---$/,/^---$/p' "$skill_file" | sed '1d;$d')
+            # Extract YAML frontmatter (awk handles multiple --- in document)
+            frontmatter=$(awk '/^---$/{if(f){exit}else{f=1;next}}f' "$skill_file")
 
             if [ -z "$frontmatter" ]; then
               echo "  [WARN] No frontmatter found"

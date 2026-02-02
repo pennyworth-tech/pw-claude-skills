@@ -21,9 +21,7 @@
     },
     "license": {
       "type": "string",
-      "enum": ["MIT", "Apache-2.0", "BSD-3-Clause", "GPL-3.0", "ISC", "proprietary"],
-      "default": "MIT",
-      "description": "License for the skill"
+      "description": "License for the skill (e.g., 'MIT', 'Apache-2.0', or custom license reference)"
     },
     "category": {
       "type": "string",
@@ -106,8 +104,8 @@
         },
         "last_validated": {
           "type": "string",
-          "format": "date",
-          "description": "Date of last successful validation run"
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "Date of last successful validation run (YYYY-MM-DD)"
         },
         "validation_status": {
           "type": "string",
@@ -138,6 +136,7 @@
       "then": {
         "properties": {
           "validation": {
+            "type": "object",
             "required": ["schema_path"]
           }
         },
@@ -152,6 +151,7 @@
       "then": {
         "properties": {
           "validation": {
+            "type": "object",
             "required": ["schema_path", "validator_path"]
           }
         },
@@ -166,6 +166,7 @@
       "then": {
         "properties": {
           "validation": {
+            "type": "object",
             "required": ["schema_path", "validator_path", "eval_path"]
           }
         },
