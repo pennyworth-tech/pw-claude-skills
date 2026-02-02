@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pennyworth.dev/schemas/skills/ios-ui-testing/output.json",
+  "title": "iOS UI Testing Skill Output Schema",
+  "description": "Output schema for ios-ui-testing skill with XCTest/XCUITest analysis",
+  "type": "object",
+  "required": ["skillName", "version", "timestamp", "status", "trustTier", "output"],
+  "properties": {
+    "skillName": { "const": "ios-ui-testing" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["success", "partial", "failed", "skipped"] },
+    "trustTier": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "output": {
+      "type": "object",
+      "required": ["summary", "findings"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 10 },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "severity"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^IOS-\\d{3}$" },
+              "title": { "type": "string" },
+              "description": { "type": "string" },
+              "severity": { "enum": ["critical", "high", "medium", "low", "info"] },
+              "category": {
+                "enum": ["accessibility-identifiers", "wait-strategies", "test-isolation", "page-objects", "device-coverage", "gesture-testing", "flaky-tests", "test-reliability", "coverage-gap"]
+              },
+              "location": {
+                "type": "object",
+                "properties": {
+                  "file": { "type": "string" },
+                  "line": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "priority"],
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "description": { "type": "string" },
+              "priority": { "enum": ["critical", "high", "medium", "low"] }
+            }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "totalTests": { "type": "integer", "minimum": 0 },
+            "passedTests": { "type": "integer", "minimum": 0 },
+            "failedTests": { "type": "integer", "minimum": 0 },
+            "flakyTests": { "type": "integer", "minimum": 0 },
+            "coverage": { "type": "object" },
+            "bestPracticeCompliance": { "type": "number", "minimum": 0, "maximum": 100 }
+          }
+        }
+      }
+    },
+    "metadata": { "type": "object" },
+    "validation": { "type": "object" }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pennyworth.dev/schemas/skills/ios-accessibility-testing/output.json",
+  "title": "iOS Accessibility Testing Skill Output Schema",
+  "description": "Output schema for ios-accessibility-testing skill with VoiceOver and WCAG analysis",
+  "type": "object",
+  "required": ["skillName", "version", "timestamp", "status", "trustTier", "output"],
+  "properties": {
+    "skillName": { "const": "ios-accessibility-testing" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["success", "partial", "failed", "skipped"] },
+    "trustTier": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "output": {
+      "type": "object",
+      "required": ["summary", "findings", "wcagCompliance"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 10 },
+        "wcagCompliance": {
+          "type": "object",
+          "properties": {
+            "level": { "enum": ["A", "AA", "AAA", "non-compliant"] },
+            "score": { "type": "number", "minimum": 0, "maximum": 100 },
+            "criteriaPass": { "type": "integer" },
+            "criteriaFail": { "type": "integer" }
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "severity"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^A11Y-\\d{3}$" },
+              "title": { "type": "string" },
+              "description": { "type": "string" },
+              "severity": { "enum": ["critical", "high", "medium", "low", "info"] },
+              "category": {
+                "enum": ["voiceover", "dynamic-type", "color-contrast", "touch-targets", "labels", "hints", "traits", "focus-order", "motion", "wcag"]
+              },
+              "wcagCriteria": { "type": "string" },
+              "location": { "type": "object" }
+            }
+          }
+        },
+        "recommendations": { "type": "array" },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "elementsAudited": { "type": "integer" },
+            "accessibleElements": { "type": "integer" },
+            "voiceOverCoverage": { "type": "number" },
+            "dynamicTypeSupport": { "type": "number" }
+          }
+        }
+      }
+    },
+    "metadata": { "type": "object" },
+    "validation": { "type": "object" }
+  }
+}

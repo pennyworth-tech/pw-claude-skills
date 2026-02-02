@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pennyworth.dev/schemas/skills/web-performance-testing/output.json",
+  "title": "Web Performance Testing Skill Output Schema",
+  "description": "Output schema for web-performance-testing skill with Lighthouse/Core Web Vitals analysis",
+  "type": "object",
+  "required": ["skillName", "version", "timestamp", "status", "trustTier", "output"],
+  "properties": {
+    "skillName": { "const": "web-performance-testing" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["success", "partial", "failed", "skipped"] },
+    "trustTier": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "output": {
+      "type": "object",
+      "required": ["summary", "findings", "coreWebVitals"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 10 },
+        "coreWebVitals": {
+          "type": "object",
+          "required": ["lcp", "fid", "cls"],
+          "properties": {
+            "lcp": { "type": "object", "properties": { "value": { "type": "number" }, "rating": { "enum": ["good", "needs-improvement", "poor"] } } },
+            "fid": { "type": "object", "properties": { "value": { "type": "number" }, "rating": { "enum": ["good", "needs-improvement", "poor"] } } },
+            "cls": { "type": "object", "properties": { "value": { "type": "number" }, "rating": { "enum": ["good", "needs-improvement", "poor"] } } },
+            "inp": { "type": "object" },
+            "ttfb": { "type": "object" }
+          }
+        },
+        "lighthouseScores": {
+          "type": "object",
+          "properties": {
+            "performance": { "type": "number", "minimum": 0, "maximum": 100 },
+            "accessibility": { "type": "number", "minimum": 0, "maximum": 100 },
+            "bestPractices": { "type": "number", "minimum": 0, "maximum": 100 },
+            "seo": { "type": "number", "minimum": 0, "maximum": 100 }
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "severity"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^WEBPERF-\\d{3}$" },
+              "title": { "type": "string" },
+              "severity": { "enum": ["critical", "high", "medium", "low", "info"] },
+              "category": {
+                "enum": ["lcp", "fid", "cls", "inp", "ttfb", "bundle-size", "image-optimization", "caching", "render-blocking", "third-party"]
+              }
+            }
+          }
+        },
+        "recommendations": { "type": "array" },
+        "budgets": { "type": "object" }
+      }
+    },
+    "metadata": { "type": "object" },
+    "validation": { "type": "object" }
+  }
+}

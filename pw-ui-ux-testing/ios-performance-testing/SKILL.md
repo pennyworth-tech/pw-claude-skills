@@ -15,9 +15,12 @@ tags:
   - profiling
   - metrics
   - mobile
-trust_tier: 0
+trust_tier: 3
 validation:
-  validation_status: pending
+  schema_path: schemas/output.schema.json
+  validator_path: scripts/validate.sh
+  eval_path: evals/eval.yaml
+  validation_status: verified
 ---
 
 # iOS Performance Testing

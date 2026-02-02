@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pennyworth.dev/schemas/skills/ios-performance-testing/output.json",
+  "title": "iOS Performance Testing Skill Output Schema",
+  "description": "Output schema for ios-performance-testing skill with XCTest metrics and Instruments analysis",
+  "type": "object",
+  "required": ["skillName", "version", "timestamp", "status", "trustTier", "output"],
+  "properties": {
+    "skillName": { "const": "ios-performance-testing" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["success", "partial", "failed", "skipped"] },
+    "trustTier": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "output": {
+      "type": "object",
+      "required": ["summary", "findings", "performanceMetrics"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 10 },
+        "performanceMetrics": {
+          "type": "object",
+          "properties": {
+            "launchTime": { "type": "object", "properties": { "cold": { "type": "number" }, "warm": { "type": "number" } } },
+            "memoryUsage": { "type": "object", "properties": { "peak": { "type": "number" }, "average": { "type": "number" } } },
+            "cpuUsage": { "type": "object" },
+            "frameRate": { "type": "object", "properties": { "average": { "type": "number" }, "dropped": { "type": "integer" } } },
+            "diskIO": { "type": "object" }
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "severity"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^PERF-\\d{3}$" },
+              "title": { "type": "string" },
+              "severity": { "enum": ["critical", "high", "medium", "low", "info"] },
+              "category": {
+                "enum": ["launch-time", "memory", "cpu", "gpu", "disk-io", "network", "frame-rate", "battery", "thermal"]
+              }
+            }
+          }
+        },
+        "recommendations": { "type": "array" },
+        "baselines": { "type": "object" }
+      }
+    },
+    "metadata": { "type": "object" },
+    "validation": { "type": "object" }
+  }
+}

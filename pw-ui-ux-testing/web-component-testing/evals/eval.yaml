@@ -1,0 +1,58 @@
+skill: web-component-testing
+version: 1.0.0
+description: Evaluation test suite for web component testing with Testing Library
+
+models_to_test:
+  - claude-3.5-sonnet
+  - claude-3-haiku
+
+test_cases:
+  - id: tc001_testing_library_queries
+    description: "Skill recommends user-centric queries"
+    category: basic
+    priority: critical
+    input:
+      prompt: "How to query elements in React Testing Library?"
+    expected_output:
+      must_contain:
+        - "getByRole"
+        - "getByLabelText"
+      must_not_contain:
+        - "getByClassName"
+    validation:
+      schema_check: true
+
+  - id: tc002_user_events
+    description: "Skill uses userEvent over fireEvent"
+    category: core
+    priority: high
+    input:
+      code: |
+        fireEvent.click(button)
+    expected_output:
+      must_contain:
+        - "userEvent"
+        - "click"
+    validation:
+      schema_check: true
+
+  - id: tc003_async_handling
+    description: "Skill handles async operations correctly"
+    category: async
+    priority: high
+    input:
+      prompt: "Test component with async data fetching"
+    expected_output:
+      must_contain:
+        - "waitFor"
+        - "findBy"
+    validation:
+      schema_check: true
+
+success_criteria:
+  pass_rate: 0.9
+  critical_pass_rate: 1.0
+
+metadata:
+  author: "@pennyworth-tech"
+  created: "2026-02-02"
