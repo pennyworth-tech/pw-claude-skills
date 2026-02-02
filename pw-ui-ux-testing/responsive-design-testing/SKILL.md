@@ -2,6 +2,22 @@
 name: responsive-design-testing
 description: Responsive design testing for multi-viewport validation, breakpoint testing, and mobile-first development. Use when validating responsive layouts, testing across screen sizes, or ensuring mobile compatibility.
 license: MIT
+version: 1.0.0
+category: ui-ux
+platforms:
+  - web
+frameworks:
+  - Playwright
+  - Cypress
+tags:
+  - web
+  - responsive
+  - viewport
+  - breakpoints
+  - mobile-first
+trust_tier: 0
+validation:
+  validation_status: pending
 ---
 
 # Responsive Design Testing

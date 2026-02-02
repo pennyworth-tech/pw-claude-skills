@@ -2,6 +2,23 @@
 name: ios-accessibility-testing
 description: iOS accessibility testing for VoiceOver, Dynamic Type, color contrast, and WCAG compliance. Use when validating iOS app accessibility, testing assistive technology support, or ensuring inclusive design.
 license: MIT
+version: 1.0.0
+category: accessibility
+platforms:
+  - ios
+frameworks:
+  - XCTest
+  - VoiceOver
+tags:
+  - ios
+  - accessibility
+  - voiceover
+  - wcag
+  - a11y
+  - mobile
+trust_tier: 0
+validation:
+  validation_status: pending
 ---
 
 # iOS Accessibility Testing

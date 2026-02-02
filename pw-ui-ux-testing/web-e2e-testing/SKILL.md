@@ -2,6 +2,22 @@
 name: web-e2e-testing
 description: End-to-end web testing with Playwright, Vibium, and browser automation patterns. Use when testing full user flows, implementing E2E test suites, or validating cross-browser compatibility.
 license: MIT
+version: 1.0.0
+category: e2e-testing
+platforms:
+  - web
+frameworks:
+  - Playwright
+  - Vibium
+tags:
+  - web
+  - e2e
+  - playwright
+  - browser-automation
+  - cross-browser
+trust_tier: 0
+validation:
+  validation_status: pending
 ---
 
 # Web E2E Testing with Playwright & Vibium

@@ -2,6 +2,24 @@
 name: web-component-testing
 description: Web component testing with React Testing Library, Vue Test Utils, and user-centric testing patterns. Use when testing UI components in isolation, implementing component-level tests, or validating user interactions.
 license: MIT
+version: 1.0.0
+category: component-testing
+platforms:
+  - web
+frameworks:
+  - React Testing Library
+  - Vue Test Utils
+  - Jest
+  - Vitest
+tags:
+  - web
+  - component-testing
+  - react
+  - vue
+  - testing-library
+trust_tier: 0
+validation:
+  validation_status: pending
 ---
 
 # Web Component Testing

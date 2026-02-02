@@ -2,6 +2,20 @@
 name: ralph-wiggum
 description: Iterative self-referential development loop methodology for autonomous AI task completion. Use when implementing complex features requiring refinement, getting tests to pass, or executing well-defined tasks with automatic verification. Named after Ralph Wiggum for persistent iteration despite setbacks.
 license: MIT
+version: 1.0.0
+category: methodology
+platforms:
+  - all
+tags:
+  - tdd
+  - iteration
+  - autonomous
+  - development-loop
+  - self-referential
+  - methodology
+trust_tier: 0
+validation:
+  validation_status: pending
 ---
 
 # Ralph Wiggum - Iterative Development Loop

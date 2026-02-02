@@ -2,6 +2,23 @@
 name: ios-ui-testing
 description: iOS UI testing with XCTest/XCUITest for native app automation, gesture testing, and multi-device validation. Use when testing iOS apps, implementing UI automation, or validating user flows on iPhone/iPad.
 license: MIT
+version: 1.0.0
+category: ios-testing
+platforms:
+  - ios
+frameworks:
+  - XCTest
+  - XCUITest
+tags:
+  - ios
+  - ui-testing
+  - xctest
+  - xcuitest
+  - automation
+  - mobile
+trust_tier: 0
+validation:
+  validation_status: pending
 ---
 
 # iOS UI Testing with XCTest/XCUITest

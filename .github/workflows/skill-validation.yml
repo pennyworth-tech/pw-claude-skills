@@ -1,0 +1,143 @@
+name: Skill Validation
+
+on:
+  push:
+    paths:
+      - '**/*.md'
+      - '.claude/skills/.validation/**'
+  pull_request:
+    paths:
+      - '**/*.md'
+      - '.claude/skills/.validation/**'
+
+jobs:
+  validate-frontmatter:
+    name: Validate Skill Frontmatter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install -g ajv-cli js-yaml
+
+      - name: Extract and validate frontmatter
+        run: |
+          set -e
+          echo "Validating skill frontmatter..."
+
+          SCHEMA_PATH=".claude/skills/.validation/schemas/skill-frontmatter.schema.json"
+          SKILL_DIRS=$(find . -name "SKILL.md" -type f | head -50)
+
+          FAILED=0
+          PASSED=0
+
+          for skill_file in $SKILL_DIRS; do
+            skill_name=$(dirname "$skill_file" | xargs basename)
+            echo "Validating: $skill_name"
+
+            # Extract YAML frontmatter
+            frontmatter=$(sed -n '/^---$/,/^---$/p' "$skill_file" | sed '1d;$d')
+
+            if [ -z "$frontmatter" ]; then
+              echo "  [WARN] No frontmatter found"
+              continue
+            fi
+
+            # Convert YAML to JSON and validate
+            echo "$frontmatter" | npx js-yaml > /tmp/frontmatter.json 2>/dev/null || {
+              echo "  [FAIL] Invalid YAML frontmatter"
+              FAILED=$((FAILED + 1))
+              continue
+            }
+
+            if npx ajv validate -s "$SCHEMA_PATH" -d /tmp/frontmatter.json --spec=draft2020 2>/dev/null; then
+              echo "  [PASS] Valid frontmatter"
+              PASSED=$((PASSED + 1))
+            else
+              echo "  [FAIL] Schema validation failed"
+              FAILED=$((FAILED + 1))
+            fi
+          done
+
+          echo ""
+          echo "=============================================="
+          echo "Validation Summary"
+          echo "=============================================="
+          echo "  Passed: $PASSED"
+          echo "  Failed: $FAILED"
+          echo "=============================================="
+
+          if [ $FAILED -gt 0 ]; then
+            echo "::error::$FAILED skills failed frontmatter validation"
+            exit 1
+          fi
+
+  validate-tier-2-plus:
+    name: Validate Tier 2+ Skills
+    runs-on: ubuntu-latest
+    needs: validate-frontmatter
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Find and validate Tier 2+ skills
+        run: |
+          set -e
+          echo "Looking for skills with trust_tier >= 2..."
+
+          SKILL_DIRS=$(find . -name "SKILL.md" -type f)
+          VALIDATED=0
+
+          for skill_file in $SKILL_DIRS; do
+            skill_dir=$(dirname "$skill_file")
+            skill_name=$(basename "$skill_dir")
+
+            # Check if skill has trust_tier >= 2
+            trust_tier=$(grep "trust_tier:" "$skill_file" | awk '{print $2}' | head -1)
+
+            if [ -z "$trust_tier" ] || [ "$trust_tier" -lt 2 ]; then
+              continue
+            fi
+
+            echo "Validating Tier $trust_tier skill: $skill_name"
+
+            # Look for validator script
+            validator="$skill_dir/scripts/validate.sh"
+            if [ -f "$validator" ] && [ -x "$validator" ]; then
+              echo "  Running validator..."
+              "$validator" --self-test || {
+                echo "::error::Validator failed for $skill_name"
+                exit 1
+              }
+              VALIDATED=$((VALIDATED + 1))
+            else
+              echo "  [WARN] No validator found for Tier $trust_tier skill"
+            fi
+          done
+
+          echo ""
+          echo "Validated $VALIDATED Tier 2+ skills"
+
+  summary:
+    name: Validation Summary
+    runs-on: ubuntu-latest
+    needs: [validate-frontmatter, validate-tier-2-plus]
+    if: always()
+    steps:
+      - name: Report status
+        run: |
+          echo "=============================================="
+          echo "Skill Validation Complete"
+          echo "=============================================="
+          echo ""
+          echo "Trust Tier Enforcement:"
+          echo "  - Tier 0 (Advisory): No validation"
+          echo "  - Tier 1 (Structured): Frontmatter + schema"
+          echo "  - Tier 2 (Validated): + Validator script"
+          echo "  - Tier 3 (Verified): + Eval suite (blocks merge)"
+          echo ""
+          echo "See workflow logs for details."

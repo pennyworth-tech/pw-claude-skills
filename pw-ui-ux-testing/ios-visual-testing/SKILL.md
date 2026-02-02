@@ -2,6 +2,23 @@
 name: ios-visual-testing
 description: iOS visual regression testing with swift-snapshot-testing, multi-device validation, and trait variation testing. Use when testing SwiftUI/UIKit visual appearance, validating design systems, or catching UI regressions.
 license: MIT
+version: 1.0.0
+category: visual-testing
+platforms:
+  - ios
+frameworks:
+  - swift-snapshot-testing
+  - SwiftUI
+  - UIKit
+tags:
+  - ios
+  - visual-testing
+  - snapshot
+  - regression
+  - mobile
+trust_tier: 0
+validation:
+  validation_status: pending
 ---
 
 # iOS Visual Regression Testing

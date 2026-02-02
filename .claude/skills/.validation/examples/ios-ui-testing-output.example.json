@@ -1,0 +1,101 @@
+{
+  "skillName": "ios-ui-testing",
+  "version": "1.0.0",
+  "timestamp": "2026-02-02T14:30:00.000Z",
+  "status": "success",
+  "trustTier": 1,
+  "output": {
+    "summary": "iOS UI testing analysis completed. Found 15 test patterns covering login flow, navigation, and gesture handling. XCUITest best practices validated with 95% compliance.",
+    "findings": [
+      {
+        "id": "IOS-001",
+        "title": "Missing Accessibility Identifiers",
+        "description": "3 UI elements in LoginViewController lack accessibility identifiers, making test selection unreliable",
+        "severity": "medium",
+        "category": "test-reliability",
+        "location": {
+          "file": "LoginViewController.swift",
+          "line": 45
+        }
+      },
+      {
+        "id": "IOS-002",
+        "title": "Hard-coded Timeouts",
+        "description": "Test uses fixed 5-second timeout instead of waitForExistence",
+        "severity": "low",
+        "category": "flaky-tests",
+        "location": {
+          "file": "LoginUITests.swift",
+          "line": 78
+        }
+      },
+      {
+        "id": "IOS-003",
+        "title": "Missing Device Orientation Tests",
+        "description": "No tests validate landscape orientation layouts",
+        "severity": "medium",
+        "category": "coverage-gap"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "REC-001",
+        "title": "Add Accessibility Identifiers to All Interactive Elements",
+        "description": "Use accessibilityIdentifier property on all buttons, text fields, and interactive elements for reliable test selection",
+        "priority": "high"
+      },
+      {
+        "id": "REC-002",
+        "title": "Replace Thread.sleep with waitForExistence",
+        "description": "Use XCTAssertTrue(element.waitForExistence(timeout: 10)) instead of fixed sleeps for more reliable tests",
+        "priority": "medium"
+      },
+      {
+        "id": "REC-003",
+        "title": "Implement Page Object Pattern",
+        "description": "Refactor tests to use Page Object pattern for better maintainability and reusability",
+        "priority": "medium"
+      }
+    ],
+    "metrics": {
+      "totalTests": 25,
+      "passedTests": 23,
+      "failedTests": 2,
+      "flakyTests": 1,
+      "coverage": {
+        "viewControllers": 85,
+        "userFlows": 90,
+        "gestures": 75
+      },
+      "bestPracticeCompliance": 95
+    },
+    "artifacts": [
+      {
+        "type": "report",
+        "path": "reports/ios-ui-test-analysis.html",
+        "format": "html",
+        "description": "Visual HTML report with test coverage breakdown"
+      },
+      {
+        "type": "screenshot",
+        "path": "screenshots/test-failures/",
+        "format": "png",
+        "description": "Screenshots captured on test failures"
+      }
+    ]
+  },
+  "metadata": {
+    "executionTimeMs": 3500,
+    "toolsUsed": ["XCTest", "XCUITest", "Xcode"],
+    "platform": "ios",
+    "framework": "XCUITest",
+    "xcodeVersion": "15.2",
+    "targetDevices": ["iPhone 15 Pro", "iPhone SE", "iPad Pro"]
+  },
+  "validation": {
+    "schemaValid": true,
+    "contentValid": true,
+    "confidence": 0.92,
+    "warnings": []
+  }
+}

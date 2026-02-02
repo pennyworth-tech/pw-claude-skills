@@ -2,6 +2,22 @@
 name: ios-performance-testing
 description: iOS app performance testing with XCTest metrics, Instruments profiling, and launch time optimization. Use when testing iOS app performance, measuring memory usage, or profiling CPU/GPU utilization.
 license: MIT
+version: 1.0.0
+category: performance
+platforms:
+  - ios
+frameworks:
+  - XCTest
+  - Instruments
+tags:
+  - ios
+  - performance
+  - profiling
+  - metrics
+  - mobile
+trust_tier: 0
+validation:
+  validation_status: pending
 ---
 
 # iOS Performance Testing

@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pennyworth.dev/schemas/skill-frontmatter.json",
+  "title": "pw-claude-skills Frontmatter Schema",
+  "description": "JSON Schema for SKILL.md YAML frontmatter with Trust Tier validation support.",
+  "type": "object",
+  "required": ["name", "description"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Skill identifier. Must be lowercase, hyphenated (e.g., 'ios-ui-testing')."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 1000,
+      "description": "Skill description for manifest and discovery"
+    },
+    "license": {
+      "type": "string",
+      "enum": ["MIT", "Apache-2.0", "BSD-3-Clause", "GPL-3.0", "ISC", "proprietary"],
+      "default": "MIT",
+      "description": "License for the skill"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "ios-testing",
+        "web-testing",
+        "mobile-testing",
+        "development-practices",
+        "automation",
+        "ui-ux",
+        "performance",
+        "accessibility",
+        "visual-testing",
+        "e2e-testing",
+        "component-testing",
+        "methodology",
+        "general"
+      ],
+      "default": "general",
+      "description": "Skill category for organization"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+      "description": "Semantic version of the skill (e.g., '1.0.0')"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author name or GitHub handle"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Tags for skill discovery"
+    },
+    "requires": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "External requirements (tools, frameworks, etc.)"
+    },
+    "platforms": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["ios", "android", "web", "desktop", "all"]
+      },
+      "description": "Target platforms for the skill"
+    },
+    "frameworks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Frameworks covered by this skill"
+    },
+
+    "trust_tier": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3,
+      "default": 0,
+      "description": "Trust tier level for validation. 0=Advisory (SKILL.md only), 1=Structured (+ JSON schema), 2=Validated (+ validator script), 3=Verified (+ eval suite)"
+    },
+    "validation": {
+      "type": "object",
+      "description": "Validation configuration (required for trust_tier >= 1)",
+      "properties": {
+        "schema_path": {
+          "type": "string",
+          "pattern": "^schemas/.*\\.json$",
+          "description": "Path to output JSON schema (relative to skill directory). Required for trust_tier >= 1."
+        },
+        "validator_path": {
+          "type": "string",
+          "pattern": "^scripts/.*\\.(sh|ts|js)$",
+          "description": "Path to validator script (relative to skill directory). Required for trust_tier >= 2."
+        },
+        "eval_path": {
+          "type": "string",
+          "pattern": "^evals/.*\\.ya?ml$",
+          "description": "Path to evaluation test suite (relative to skill directory). Required for trust_tier >= 3."
+        },
+        "last_validated": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of last successful validation run"
+        },
+        "validation_status": {
+          "type": "string",
+          "enum": ["passing", "failing", "skipped", "pending", "unknown"],
+          "default": "unknown",
+          "description": "Current validation status from CI"
+        },
+        "pass_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Current pass rate from evaluation suite (0.0-1.0)"
+        }
+      },
+      "dependentRequired": {
+        "schema_path": [],
+        "validator_path": ["schema_path"],
+        "eval_path": ["validator_path"]
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "trust_tier": { "const": 1 } },
+        "required": ["trust_tier"]
+      },
+      "then": {
+        "properties": {
+          "validation": {
+            "required": ["schema_path"]
+          }
+        },
+        "required": ["validation"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "trust_tier": { "const": 2 } },
+        "required": ["trust_tier"]
+      },
+      "then": {
+        "properties": {
+          "validation": {
+            "required": ["schema_path", "validator_path"]
+          }
+        },
+        "required": ["validation"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "trust_tier": { "const": 3 } },
+        "required": ["trust_tier"]
+      },
+      "then": {
+        "properties": {
+          "validation": {
+            "required": ["schema_path", "validator_path", "eval_path"]
+          }
+        },
+        "required": ["validation"]
+      }
+    }
+  ],
+  "additionalProperties": true
+}

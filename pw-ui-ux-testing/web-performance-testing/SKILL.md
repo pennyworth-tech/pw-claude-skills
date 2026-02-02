@@ -2,6 +2,24 @@
 name: web-performance-testing
 description: Web performance testing with Lighthouse, Core Web Vitals, and performance budgets. Use when measuring web performance, optimizing load times, or implementing performance monitoring.
 license: MIT
+version: 1.0.0
+category: performance
+platforms:
+  - web
+frameworks:
+  - Lighthouse
+  - Web Vitals
+tags:
+  - web
+  - performance
+  - lighthouse
+  - core-web-vitals
+  - lcp
+  - fid
+  - cls
+trust_tier: 0
+validation:
+  validation_status: pending
 ---
 
 # Web Performance Testing
