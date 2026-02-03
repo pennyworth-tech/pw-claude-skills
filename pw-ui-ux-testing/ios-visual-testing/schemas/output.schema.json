@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pennyworth.dev/schemas/skills/ios-visual-testing/output.json",
+  "title": "iOS Visual Testing Skill Output Schema",
+  "description": "Output schema for ios-visual-testing skill with swift-snapshot-testing analysis",
+  "type": "object",
+  "required": ["skillName", "version", "timestamp", "status", "trustTier", "output"],
+  "properties": {
+    "skillName": { "const": "ios-visual-testing" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["success", "partial", "failed", "skipped"] },
+    "trustTier": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "output": {
+      "type": "object",
+      "required": ["summary", "findings", "snapshotResults"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 10 },
+        "snapshotResults": {
+          "type": "object",
+          "properties": {
+            "total": { "type": "integer" },
+            "passed": { "type": "integer" },
+            "failed": { "type": "integer" },
+            "new": { "type": "integer" },
+            "devicesCovered": { "type": "array", "items": { "type": "string" } },
+            "traitVariations": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "severity"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^VIS-\\d{3}$" },
+              "title": { "type": "string" },
+              "severity": { "enum": ["critical", "high", "medium", "low", "info"] },
+              "category": {
+                "enum": ["layout-shift", "color-mismatch", "font-rendering", "image-diff", "dark-mode", "dynamic-type", "device-specific", "trait-variation"]
+              },
+              "diffPercentage": { "type": "number", "minimum": 0, "maximum": 100 }
+            }
+          }
+        },
+        "recommendations": { "type": "array" },
+        "artifacts": { "type": "array" }
+      }
+    },
+    "metadata": { "type": "object" },
+    "validation": { "type": "object" }
+  }
+}

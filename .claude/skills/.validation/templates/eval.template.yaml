@@ -1,0 +1,154 @@
+# =============================================================================
+# pw-claude-skills Evaluation Test Suite Template
+# Copy this template to: your-skill/evals/eval.yaml
+# =============================================================================
+
+skill: REPLACE_WITH_SKILL_NAME
+version: 1.0.0
+description: >
+  Evaluation test suite for REPLACE_WITH_SKILL_NAME skill.
+  Tests core functionality across multiple models to ensure consistent,
+  high-quality output.
+
+# =============================================================================
+# Multi-Model Configuration
+# =============================================================================
+
+models_to_test:
+  - claude-3.5-sonnet    # Primary model
+  - claude-3-haiku       # Fast model
+
+# =============================================================================
+# Environment Setup
+# =============================================================================
+
+setup:
+  required_tools: []
+  environment_variables: {}
+  fixtures: []
+
+# =============================================================================
+# Test Cases
+# =============================================================================
+
+test_cases:
+  # -------------------------------------------------------------------------
+  # Basic Functionality Tests
+  # -------------------------------------------------------------------------
+
+  - id: tc001_basic_invocation
+    description: "Skill responds to basic invocation with valid output"
+    category: basic
+    priority: critical
+
+    input:
+      prompt: |
+        REPLACE WITH BASIC TEST INPUT
+      context:
+        language: javascript
+
+    expected_output:
+      must_contain:
+        - "expected_keyword"
+      must_not_contain:
+        - "error"
+        - "unable"
+
+    validation:
+      schema_check: true
+      keyword_match_threshold: 0.8
+
+  - id: tc002_handles_empty_input
+    description: "Skill handles empty or minimal input gracefully"
+    category: edge_cases
+    priority: high
+
+    input:
+      prompt: "MINIMAL INPUT TEST"
+      context:
+        language: unknown
+
+    expected_output:
+      must_contain:
+        - "provide"
+      must_not_contain:
+        - "exception"
+        - "crash"
+
+    validation:
+      schema_check: true
+      allow_partial: true
+
+  # -------------------------------------------------------------------------
+  # Core Functionality Tests - CUSTOMIZE THESE
+  # -------------------------------------------------------------------------
+
+  - id: tc003_core_feature
+    description: "DESCRIBE WHAT THIS TEST VALIDATES"
+    category: core
+    priority: high
+
+    input:
+      code: |
+        // Replace with relevant code sample
+        const example = "test";
+      context:
+        language: javascript
+        framework: nodejs
+
+    expected_output:
+      must_contain:
+        - "EXPECTED_KEYWORD"
+
+    validation:
+      schema_check: true
+      keyword_match_threshold: 0.8
+
+  # -------------------------------------------------------------------------
+  # Negative Tests
+  # -------------------------------------------------------------------------
+
+  - id: tc010_no_false_positives
+    description: "Skill does not flag clean code as problematic"
+    category: negative
+    priority: high
+
+    input:
+      code: |
+        // Well-written, clean code
+        function add(a, b) {
+          return a + b;
+        }
+      context:
+        language: javascript
+
+    expected_output:
+      must_contain:
+        - "no issues"
+      must_not_contain:
+        - "critical"
+        - "error"
+
+    validation:
+      schema_check: true
+
+# =============================================================================
+# Success Criteria
+# =============================================================================
+
+success_criteria:
+  pass_rate: 0.9
+  critical_pass_rate: 1.0
+  avg_reasoning_quality: 0.7
+  max_execution_time_ms: 300000
+  cross_model_variance: 0.15
+
+# =============================================================================
+# Metadata
+# =============================================================================
+
+metadata:
+  author: "@pennyworth-tech"
+  created: "2026-02-02"
+  last_updated: "2026-02-02"
+  coverage_target: "Core functionality and common edge cases"

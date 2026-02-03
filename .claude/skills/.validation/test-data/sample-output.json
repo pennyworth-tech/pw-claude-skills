@@ -1,0 +1,45 @@
+{
+  "skillName": "sample-skill",
+  "version": "1.0.0",
+  "timestamp": "2026-02-02T12:00:00Z",
+  "status": "success",
+  "trustTier": 1,
+  "output": {
+    "summary": "Sample skill execution completed successfully",
+    "findings": [
+      {
+        "id": "FIND-001",
+        "title": "Sample finding",
+        "description": "This is an example finding for validation testing",
+        "severity": "medium",
+        "category": "example"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "REC-001",
+        "title": "Sample recommendation",
+        "description": "This is an example recommendation",
+        "priority": "medium"
+      }
+    ],
+    "metrics": {
+      "total": 10,
+      "passed": 8,
+      "failed": 2,
+      "coverage": 80
+    }
+  },
+  "metadata": {
+    "executionTimeMs": 1500,
+    "toolsUsed": ["sample-tool"],
+    "platform": "node",
+    "framework": "jest"
+  },
+  "validation": {
+    "schemaValid": true,
+    "contentValid": true,
+    "confidence": 0.95,
+    "warnings": []
+  }
+}

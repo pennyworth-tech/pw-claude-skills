@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pennyworth.dev/schemas/skills/web-e2e-testing/output.json",
+  "title": "Web E2E Testing Skill Output Schema",
+  "description": "Output schema for web-e2e-testing skill with Playwright/Vibium analysis",
+  "type": "object",
+  "required": ["skillName", "version", "timestamp", "status", "trustTier", "output"],
+  "properties": {
+    "skillName": { "const": "web-e2e-testing" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["success", "partial", "failed", "skipped"] },
+    "trustTier": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "output": {
+      "type": "object",
+      "required": ["summary", "findings", "testResults"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 10 },
+        "testResults": {
+          "type": "object",
+          "properties": {
+            "total": { "type": "integer" },
+            "passed": { "type": "integer" },
+            "failed": { "type": "integer" },
+            "flaky": { "type": "integer" },
+            "duration": { "type": "integer" },
+            "browsers": { "type": "array", "items": { "enum": ["chromium", "firefox", "webkit"] } }
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "severity"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^E2E-\\d{3}$" },
+              "title": { "type": "string" },
+              "severity": { "enum": ["critical", "high", "medium", "low", "info"] },
+              "category": {
+                "enum": ["locator-strategy", "wait-handling", "test-isolation", "network-mocking", "visual-regression", "cross-browser", "mobile-emulation", "authentication"]
+              }
+            }
+          }
+        },
+        "recommendations": { "type": "array" },
+        "browserCoverage": {
+          "type": "object",
+          "properties": {
+            "chromium": { "type": "boolean" },
+            "firefox": { "type": "boolean" },
+            "webkit": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "metadata": { "type": "object" },
+    "validation": { "type": "object" }
+  }
+}

@@ -1,0 +1,73 @@
+skill: ralph-wiggum
+version: 1.0.0
+description: Evaluation test suite for Ralph Wiggum iterative development loop
+
+models_to_test:
+  - claude-3.5-sonnet
+  - claude-3-haiku
+
+test_cases:
+  - id: tc001_loop_concept
+    description: "Skill explains the iterative loop concept"
+    category: basic
+    priority: critical
+    input:
+      prompt: "What is the Ralph Wiggum methodology?"
+    expected_output:
+      must_contain:
+        - "loop"
+        - "iteration"
+        - "prompt"
+      must_not_contain:
+        - "error"
+    validation:
+      schema_check: true
+
+  - id: tc002_completion_promise
+    description: "Skill uses completion promises"
+    category: core
+    priority: high
+    input:
+      prompt: "How to signal task completion?"
+    expected_output:
+      must_contain:
+        - "promise"
+        - "complete"
+    validation:
+      schema_check: true
+
+  - id: tc003_tdd_integration
+    description: "Skill integrates with TDD"
+    category: methodology
+    priority: high
+    input:
+      prompt: "Use Ralph Wiggum for TDD"
+    expected_output:
+      must_contain:
+        - "test"
+        - "pass"
+        - "iteration"
+    validation:
+      schema_check: true
+
+  - id: tc004_fallback_handling
+    description: "Skill handles blocked scenarios"
+    category: edge-cases
+    priority: medium
+    input:
+      prompt: "What if iteration gets stuck?"
+    expected_output:
+      must_contain:
+        - "blocked"
+        - "max"
+        - "iteration"
+    validation:
+      schema_check: true
+
+success_criteria:
+  pass_rate: 0.9
+  critical_pass_rate: 1.0
+
+metadata:
+  author: "@pennyworth-tech"
+  created: "2026-02-02"

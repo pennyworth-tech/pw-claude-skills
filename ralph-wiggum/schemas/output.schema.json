@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pennyworth.dev/schemas/skills/ralph-wiggum/output.json",
+  "title": "Ralph Wiggum Skill Output Schema",
+  "description": "Output schema for ralph-wiggum iterative development loop methodology",
+  "type": "object",
+  "required": ["skillName", "version", "timestamp", "status", "trustTier", "output"],
+  "properties": {
+    "skillName": { "const": "ralph-wiggum" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["success", "partial", "failed", "skipped"] },
+    "trustTier": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "output": {
+      "type": "object",
+      "required": ["summary", "iterationResults"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 10 },
+        "iterationResults": {
+          "type": "object",
+          "required": ["totalIterations", "completionStatus"],
+          "properties": {
+            "totalIterations": { "type": "integer", "minimum": 1 },
+            "maxIterations": { "type": "integer" },
+            "completionStatus": { "enum": ["complete", "blocked", "max-iterations", "error"] },
+            "completionPromise": { "type": "string" },
+            "testsPassingAtEnd": { "type": "boolean" }
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^RALPH-\\d{3}$" },
+              "title": { "type": "string" },
+              "severity": { "enum": ["critical", "high", "medium", "low", "info"] },
+              "category": {
+                "enum": ["prompt-design", "completion-criteria", "iteration-limit", "verification", "self-correction", "progress-tracking"]
+              },
+              "iteration": { "type": "integer" }
+            }
+          }
+        },
+        "recommendations": { "type": "array" },
+        "progressLog": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "iteration": { "type": "integer" },
+              "action": { "type": "string" },
+              "testsPassing": { "type": "boolean" },
+              "filesModified": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "metadata": { "type": "object" },
+    "validation": { "type": "object" }
+  }
+}
