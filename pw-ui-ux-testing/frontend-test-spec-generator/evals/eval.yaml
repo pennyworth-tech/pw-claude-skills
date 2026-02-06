@@ -1,0 +1,62 @@
+skill: frontend-test-spec-generator
+version: 1.1.0
+description: Evaluation test suite for frontend test spec generation with AISP quality gates
+
+models_to_test:
+  - claude-3.5-sonnet
+  - claude-3-haiku
+
+test_cases:
+  - id: tc001_inline_feature_spec
+    description: "Skill generates test specs from inline feature text"
+    category: basic
+    priority: critical
+    input:
+      prompt: "/frontend-test-spec-generator As a user, I want to reset my password so I can regain access to my account."
+    expected_output:
+      must_contain:
+        - "recommendation"
+        - "bddScenarios"
+        - "sfdipot"
+      must_not_contain:
+        - "error"
+    validation:
+      schema_check: true
+
+  - id: tc002_aisp_quality_gates
+    description: "Output includes AISP quality gate results with tier"
+    category: quality-gates
+    priority: critical
+    input:
+      prompt: "/frontend-test-spec-generator As a customer, I want to add items to cart and checkout."
+    expected_output:
+      must_contain:
+        - "aispQualityGates"
+        - "p0Distribution"
+        - "humanExploration"
+        - "passiveVerbCheck"
+        - "tier"
+    validation:
+      schema_check: true
+
+  - id: tc003_gap_identification
+    description: "Skill identifies gaps in incomplete feature specs"
+    category: analysis
+    priority: high
+    input:
+      prompt: "/frontend-test-spec-generator As a user, I want social login."
+    expected_output:
+      must_contain:
+        - "gaps"
+        - "actionItems"
+        - "CONDITIONAL"
+    validation:
+      schema_check: true
+
+success_criteria:
+  pass_rate: 0.9
+  critical_pass_rate: 1.0
+
+metadata:
+  author: "@pennyworth-tech"
+  created: "2026-02-06"

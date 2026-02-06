@@ -1,0 +1,153 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pennyworth.dev/schemas/skills/frontend-test-spec-generator/output.json",
+  "title": "Frontend Test Spec Generator Output Schema",
+  "description": "Output schema for frontend-test-spec-generator skill with AISP quality gates",
+  "type": "object",
+  "required": ["skillName", "version", "timestamp", "status", "trustTier", "output"],
+  "properties": {
+    "skillName": { "const": "frontend-test-spec-generator" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["success", "partial", "failed", "skipped"] },
+    "trustTier": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "output": {
+      "type": "object",
+      "required": ["storyId", "recommendation", "qualityScore", "aispQualityGates", "specifications"],
+      "properties": {
+        "storyId": { "type": "string" },
+        "storyName": { "type": "string" },
+        "recommendation": { "enum": ["READY", "CONDITIONAL", "NOT-READY"] },
+        "testEnhancementNeeded": { "type": "boolean" },
+        "qualityScore": {
+          "type": "object",
+          "required": ["invest", "bddCoverage", "testIdeaQuality", "overall"],
+          "properties": {
+            "invest": { "type": "number", "minimum": 0, "maximum": 100 },
+            "testability": { "type": "number", "minimum": 0, "maximum": 100 },
+            "bddCoverage": { "type": "number", "minimum": 0, "maximum": 100 },
+            "testIdeaQuality": { "type": "number", "minimum": 0, "maximum": 100 },
+            "overall": { "type": "number", "minimum": 0, "maximum": 100 }
+          }
+        },
+        "aispQualityGates": {
+          "type": "object",
+          "required": ["p0Distribution", "humanExploration", "passiveVerbCheck", "tier", "rulesPassed", "rulesTotal"],
+          "properties": {
+            "p0Distribution": {
+              "type": "object",
+              "required": ["actual", "target", "pass"],
+              "properties": {
+                "actual": { "type": "number", "minimum": 0, "maximum": 1 },
+                "target": { "type": "string" },
+                "pass": { "type": "boolean" }
+              }
+            },
+            "humanExploration": {
+              "type": "object",
+              "required": ["actual", "target", "pass"],
+              "properties": {
+                "actual": { "type": "number", "minimum": 0, "maximum": 1 },
+                "target": { "type": "string" },
+                "pass": { "type": "boolean" }
+              }
+            },
+            "passiveVerbCheck": {
+              "type": "object",
+              "required": ["violations", "pass"],
+              "properties": {
+                "violations": { "type": "integer", "minimum": 0 },
+                "violatingIds": { "type": "array", "items": { "type": "string" } },
+                "pass": { "type": "boolean" }
+              }
+            },
+            "tier": { "enum": ["gold", "silver", "bronze"] },
+            "rulesPassed": { "type": "integer", "minimum": 0, "maximum": 3 },
+            "rulesTotal": { "const": 3 }
+          }
+        },
+        "specifications": {
+          "type": "object",
+          "required": ["bddScenarios", "testIdeas", "sfdipotFactors"],
+          "properties": {
+            "bddScenarios": {
+              "type": "object",
+              "required": ["count"],
+              "properties": {
+                "count": { "type": "integer", "minimum": 0 },
+                "happyPath": { "type": "integer" },
+                "errorPath": { "type": "integer" },
+                "boundary": { "type": "integer" },
+                "security": { "type": "integer" },
+                "file": { "type": "string" }
+              }
+            },
+            "testIdeas": {
+              "type": "object",
+              "required": ["count", "p0Critical"],
+              "properties": {
+                "count": { "type": "integer", "minimum": 0 },
+                "p0Critical": { "type": "integer" },
+                "p1High": { "type": "integer" },
+                "p2Medium": { "type": "integer" },
+                "rewriteQuality": { "type": "number" },
+                "file": { "type": "string" }
+              }
+            },
+            "sfdipotFactors": {
+              "type": "object",
+              "required": ["coverage", "totalTestIdeas"],
+              "properties": {
+                "coverage": { "type": "string", "pattern": "^\\d+/7$" },
+                "p0Factors": { "type": "array", "items": { "type": "string" } },
+                "p1Factors": { "type": "array", "items": { "type": "string" } },
+                "p2Factors": { "type": "array", "items": { "type": "string" } },
+                "totalTestIdeas": { "type": "integer", "minimum": 0 },
+                "file": { "type": "string" }
+              }
+            }
+          }
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "description", "priority"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^GAP-\\d{2}$" },
+              "description": { "type": "string" },
+              "priority": { "enum": ["P0", "P1", "P2"] },
+              "category": { "enum": ["missing-requirement", "ambiguous", "edge-case", "nfr"] }
+            }
+          }
+        },
+        "actionItems": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["owner", "action", "priority"],
+            "properties": {
+              "owner": { "type": "string" },
+              "action": { "type": "string" },
+              "priority": { "enum": ["P0", "P1", "P2"] },
+              "deadline": { "type": "string" }
+            }
+          }
+        },
+        "flags": {
+          "type": "object",
+          "properties": {
+            "HAS_API": { "type": "boolean" },
+            "HAS_REFACTORING": { "type": "boolean" },
+            "HAS_DEPENDENCIES": { "type": "boolean" },
+            "HAS_SECURITY": { "type": "boolean" }
+          }
+        },
+        "outputFolder": { "type": "string" },
+        "generatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "metadata": { "type": "object" },
+    "validation": { "type": "object" }
+  }
+}
