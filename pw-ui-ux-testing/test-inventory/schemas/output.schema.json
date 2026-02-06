@@ -1,0 +1,165 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pennyworth.dev/schemas/skills/test-inventory/output.json",
+  "title": "Test Inventory Output Schema",
+  "description": "Output schema for test-inventory skill with AISP quality gates",
+  "type": "object",
+  "required": ["skillName", "version", "timestamp", "status", "trustTier", "output"],
+  "properties": {
+    "skillName": { "const": "test-inventory" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["success", "partial", "failed", "skipped"] },
+    "trustTier": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "output": {
+      "type": "object",
+      "required": ["generatedAt", "version", "analysisType", "targetPath", "summary", "services", "qualityGates"],
+      "properties": {
+        "generatedAt": { "type": "string", "format": "date-time" },
+        "version": { "const": "1.0.0" },
+        "analysisType": { "const": "static" },
+        "targetPath": { "type": "string", "minLength": 1 },
+        "summary": {
+          "type": "object",
+          "required": ["totalTestFiles", "totalTestCases", "servicesAnalyzed", "coverage", "byFramework", "byType"],
+          "properties": {
+            "totalTestFiles": { "type": "integer", "minimum": 0 },
+            "totalTestCases": { "type": "integer", "minimum": 0 },
+            "servicesAnalyzed": { "type": "integer", "minimum": 0 },
+            "coverage": {
+              "type": "object",
+              "required": ["line", "branch", "function", "statement", "note"],
+              "properties": {
+                "line": { "type": "number", "minimum": 0, "maximum": 100 },
+                "branch": { "type": "number", "minimum": 0, "maximum": 100 },
+                "function": { "type": "number", "minimum": 0, "maximum": 100 },
+                "statement": { "type": "number", "minimum": 0, "maximum": 100 },
+                "note": { "type": "string" }
+              }
+            },
+            "byFramework": {
+              "type": "object",
+              "additionalProperties": { "type": "integer", "minimum": 0 }
+            },
+            "byType": {
+              "type": "object",
+              "additionalProperties": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "path", "testFiles", "totalTests"],
+            "properties": {
+              "name": { "type": "string" },
+              "path": { "type": "string" },
+              "testFiles": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["path", "framework", "testCount", "testNames", "type"],
+                  "properties": {
+                    "path": { "type": "string" },
+                    "framework": { "enum": ["vitest", "jest", "mocha", "playwright", "cypress", "unknown"] },
+                    "testCount": { "type": "integer", "minimum": 0 },
+                    "testNames": { "type": "array", "items": { "type": "string" } },
+                    "type": { "enum": ["unit", "integration", "e2e", "unknown"] },
+                    "dependencies": {
+                      "type": "object",
+                      "properties": {
+                        "envVars": { "type": "array", "items": { "type": "string" } },
+                        "externalServices": { "type": "array", "items": { "type": "string" } },
+                        "mockRequirements": { "type": "array", "items": { "type": "string" } }
+                      }
+                    },
+                    "codeMapping": {
+                      "type": "object",
+                      "properties": {
+                        "sourceFile": { "type": "string" },
+                        "functionsCovered": { "type": "array", "items": { "type": "string" } }
+                      }
+                    }
+                  }
+                }
+              },
+              "totalTests": { "type": "integer", "minimum": 0 },
+              "envRequirements": { "type": "array", "items": { "type": "string" } },
+              "externalDependencies": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "kgStats": {
+          "type": "object",
+          "required": ["nodes", "edges", "filesIndexed", "searchLatency"],
+          "properties": {
+            "nodes": { "type": "integer", "minimum": 0 },
+            "edges": { "type": "integer", "minimum": 0 },
+            "filesIndexed": { "type": "integer", "minimum": 0 },
+            "searchLatency": { "type": "number", "minimum": 0 }
+          }
+        },
+        "coverageGaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["file", "severity", "riskScore"],
+            "properties": {
+              "file": { "type": "string" },
+              "functions": { "type": "array", "items": { "type": "string" } },
+              "severity": { "enum": ["HIGH", "MEDIUM", "LOW"] },
+              "riskScore": { "type": "number", "minimum": 0, "maximum": 1 },
+              "reasoning": { "type": "string" }
+            }
+          }
+        },
+        "qualityGates": {
+          "type": "object",
+          "required": ["allServicesHaveTests", "envVarsDocumented", "searchLatencyUnder100ms", "tier", "rulesPassed", "rulesTotal"],
+          "properties": {
+            "allServicesHaveTests": {
+              "type": "object",
+              "required": ["pass", "details"],
+              "properties": {
+                "pass": { "type": "boolean" },
+                "details": { "type": "string" }
+              }
+            },
+            "envVarsDocumented": {
+              "type": "object",
+              "required": ["pass", "details"],
+              "properties": {
+                "pass": { "type": "boolean" },
+                "details": { "type": "string" }
+              }
+            },
+            "searchLatencyUnder100ms": {
+              "type": "object",
+              "required": ["pass", "actual"],
+              "properties": {
+                "pass": { "type": "boolean" },
+                "actual": { "type": "number", "minimum": 0 }
+              }
+            },
+            "tier": { "enum": ["gold", "silver", "bronze"] },
+            "rulesPassed": { "type": "integer", "minimum": 0, "maximum": 3 },
+            "rulesTotal": { "const": 3 }
+          }
+        },
+        "changes": {
+          "type": "object",
+          "properties": {
+            "baseBranch": { "type": "string" },
+            "added": { "type": "array", "items": { "type": "string" } },
+            "removed": { "type": "array", "items": { "type": "string" } },
+            "modified": { "type": "array", "items": { "type": "string" } },
+            "testCountDelta": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "metadata": { "type": "object" },
+    "validation": { "type": "object" }
+  }
+}
