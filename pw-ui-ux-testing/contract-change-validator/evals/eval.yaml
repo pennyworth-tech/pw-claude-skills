@@ -1,0 +1,122 @@
+skill: contract-change-validator
+version: 1.0.0
+description: Evaluation test suite for contract change extraction and validation
+
+models_to_test:
+  - claude-3.5-sonnet
+  - claude-3-haiku
+
+test_cases:
+  - id: tc001_basic_extraction
+    description: "Skill extracts contracts from current directory"
+    category: basic
+    priority: critical
+    input:
+      prompt: "/contract-change-validator"
+    expected_output:
+      must_contain:
+        - "totalContracts"
+        - "contracts"
+        - "qualityGates"
+        - "tier"
+      must_not_contain:
+        - "error"
+    validation:
+      schema_check: true
+
+  - id: tc002_specific_path
+    description: "Skill extracts contracts from a specific path"
+    category: basic
+    priority: critical
+    input:
+      prompt: "/contract-change-validator path:src/"
+    expected_output:
+      must_contain:
+        - "targetPath"
+        - "contracts"
+        - "byType"
+    validation:
+      schema_check: true
+
+  - id: tc003_diff_mode
+    description: "Skill diffs contracts against base branch"
+    category: diff
+    priority: critical
+    input:
+      prompt: "/contract-change-validator diff --base main"
+    expected_output:
+      must_contain:
+        - "changes"
+        - "added"
+        - "removed"
+        - "breaking"
+    validation:
+      schema_check: true
+
+  - id: tc004_congruence_check
+    description: "Output includes cross-type congruence scoring"
+    category: congruence
+    priority: critical
+    input:
+      prompt: "/contract-change-validator"
+    expected_output:
+      must_contain:
+        - "congruenceScore"
+        - "congruenceIssues"
+    validation:
+      schema_check: true
+
+  - id: tc005_quality_gates
+    description: "Output includes AISP quality gate results with tier"
+    category: quality-gates
+    priority: critical
+    input:
+      prompt: "/contract-change-validator"
+    expected_output:
+      must_contain:
+        - "contractsCovered"
+        - "breakingChangesDocumented"
+        - "congruenceScore"
+        - "tier"
+        - "rulesPassed"
+    validation:
+      schema_check: true
+
+  - id: tc006_six_contract_types
+    description: "Summary shows all 6 contract type counts"
+    category: completeness
+    priority: high
+    input:
+      prompt: "/contract-change-validator"
+    expected_output:
+      must_contain:
+        - "restApi"
+        - "dataDefinitions"
+        - "testData"
+        - "events"
+        - "urlConfig"
+        - "libraryVersions"
+    validation:
+      schema_check: true
+
+  - id: tc007_breaking_changes
+    description: "Breaking change detection with impact classification"
+    category: breaking
+    priority: high
+    input:
+      prompt: "/contract-change-validator diff --base main --check-breaking"
+    expected_output:
+      must_contain:
+        - "breaking"
+        - "impact"
+    validation:
+      schema_check: true
+
+success_criteria:
+  pass_rate: 0.9
+  critical_pass_rate: 1.0
+
+metadata:
+  author: "@pennyworth-tech"
+  created: "2026-02-12"
+  linear_issue: BL-245

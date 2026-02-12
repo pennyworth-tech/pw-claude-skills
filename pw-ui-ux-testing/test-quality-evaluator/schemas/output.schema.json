@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pennyworth.dev/schemas/skills/test-quality-evaluator/output.json",
+  "title": "Test Quality Evaluator Output Schema",
+  "description": "Output schema for test-quality-evaluator skill with AISP quality gates",
+  "type": "object",
+  "required": ["skillName", "version", "timestamp", "status", "trustTier", "output"],
+  "properties": {
+    "skillName": { "const": "test-quality-evaluator" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["success", "partial", "failed", "skipped"] },
+    "trustTier": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "output": {
+      "type": "object",
+      "required": ["targetPath", "analysisType", "summary", "evaluations", "qualityGates"],
+      "properties": {
+        "targetPath": { "type": "string", "minLength": 1 },
+        "analysisType": { "const": "static" },
+        "summary": {
+          "type": "object",
+          "required": ["totalTestFiles", "totalEvaluated", "averageScore", "averageGrade", "overallThumbsUp", "dataQuality", "gradeDistribution", "note"],
+          "properties": {
+            "totalTestFiles": { "type": "integer", "minimum": 0 },
+            "totalEvaluated": { "type": "integer", "minimum": 0 },
+            "averageScore": { "type": "number", "minimum": 0, "maximum": 100 },
+            "averageGrade": { "enum": ["A", "B", "C", "D", "F"] },
+            "overallThumbsUp": { "type": "boolean" },
+            "dataQuality": { "enum": ["HIGH", "MEDIUM", "LOW"] },
+            "gradeDistribution": {
+              "type": "object",
+              "required": ["A", "B", "C", "D", "F"],
+              "properties": {
+                "A": { "type": "integer", "minimum": 0 },
+                "B": { "type": "integer", "minimum": 0 },
+                "C": { "type": "integer", "minimum": 0 },
+                "D": { "type": "integer", "minimum": 0 },
+                "F": { "type": "integer", "minimum": 0 }
+              }
+            },
+            "note": { "type": "string" }
+          }
+        },
+        "evaluations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["testFile", "grade", "score", "thumbsUp", "comment", "signals"],
+            "properties": {
+              "testFile": { "type": "string" },
+              "grade": { "enum": ["A", "B", "C", "D", "F"] },
+              "score": { "type": "number", "minimum": 0, "maximum": 100 },
+              "thumbsUp": { "type": "boolean" },
+              "comment": { "type": "string" },
+              "signals": {
+                "type": "object",
+                "required": ["mockCount", "realCount"],
+                "properties": {
+                  "mockCount": { "type": "integer", "minimum": 0 },
+                  "realCount": { "type": "integer", "minimum": 0 },
+                  "topMockPatterns": { "type": "array", "items": { "type": "string" } },
+                  "topRealPatterns": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        "qualityGates": {
+          "type": "object",
+          "required": ["minimumQuality", "acceptableFailures", "evidenceQuality", "tier", "rulesPassed", "rulesTotal"],
+          "properties": {
+            "minimumQuality": {
+              "type": "object",
+              "required": ["pass", "actual", "threshold"],
+              "properties": {
+                "pass": { "type": "boolean" },
+                "actual": { "type": "number", "minimum": 0, "maximum": 100 },
+                "threshold": { "const": 70 }
+              }
+            },
+            "acceptableFailures": {
+              "type": "object",
+              "required": ["pass", "actual", "threshold"],
+              "properties": {
+                "pass": { "type": "boolean" },
+                "actual": { "type": "number", "minimum": 0, "maximum": 1 },
+                "threshold": { "const": 0.10 }
+              }
+            },
+            "evidenceQuality": {
+              "type": "object",
+              "required": ["pass", "actual", "threshold"],
+              "properties": {
+                "pass": { "type": "boolean" },
+                "actual": { "type": "number", "minimum": 0, "maximum": 1 },
+                "threshold": { "const": 0.60 }
+              }
+            },
+            "tier": { "enum": ["gold", "silver", "bronze"] },
+            "rulesPassed": { "type": "integer", "minimum": 0, "maximum": 3 },
+            "rulesTotal": { "const": 3 }
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "metadata": { "type": "object" },
+    "validation": { "type": "object" }
+  }
+}

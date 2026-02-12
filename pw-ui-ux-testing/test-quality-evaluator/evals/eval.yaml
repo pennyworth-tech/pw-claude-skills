@@ -1,0 +1,93 @@
+skill: test-quality-evaluator
+version: 1.0.0
+description: Evaluation test suite for test quality grading with AISP quality gates
+
+models_to_test:
+  - claude-3.5-sonnet
+  - claude-3-haiku
+
+test_cases:
+  - id: tc001_basic_evaluation
+    description: "Skill evaluates test files in current directory"
+    category: basic
+    priority: critical
+    input:
+      prompt: "/test-quality-evaluator"
+    expected_output:
+      must_contain:
+        - "averageScore"
+        - "averageGrade"
+        - "gradeDistribution"
+        - "qualityGates"
+        - "tier"
+      must_not_contain:
+        - "error"
+    validation:
+      schema_check: true
+
+  - id: tc002_specific_path
+    description: "Skill evaluates test files at a specific path"
+    category: basic
+    priority: critical
+    input:
+      prompt: "/test-quality-evaluator path:tests/integration/"
+    expected_output:
+      must_contain:
+        - "targetPath"
+        - "evaluations"
+        - "signals"
+    validation:
+      schema_check: true
+
+  - id: tc003_quality_gates
+    description: "Output includes AISP quality gate results with tier"
+    category: quality-gates
+    priority: critical
+    input:
+      prompt: "/test-quality-evaluator"
+    expected_output:
+      must_contain:
+        - "minimumQuality"
+        - "acceptableFailures"
+        - "evidenceQuality"
+        - "tier"
+        - "rulesPassed"
+    validation:
+      schema_check: true
+
+  - id: tc004_verbose_signals
+    description: "Verbose mode shows per-file signal details"
+    category: verbose
+    priority: high
+    input:
+      prompt: "/test-quality-evaluator path:tests/ --verbose"
+    expected_output:
+      must_contain:
+        - "mockCount"
+        - "realCount"
+        - "topMockPatterns"
+        - "topRealPatterns"
+    validation:
+      schema_check: true
+
+  - id: tc005_honesty_note
+    description: "Summary includes methodology honesty note"
+    category: integrity
+    priority: high
+    input:
+      prompt: "/test-quality-evaluator"
+    expected_output:
+      must_contain:
+        - "note"
+        - "static"
+    validation:
+      schema_check: true
+
+success_criteria:
+  pass_rate: 0.9
+  critical_pass_rate: 1.0
+
+metadata:
+  author: "@pennyworth-tech"
+  created: "2026-02-06"
+  linear_issue: BL-242
