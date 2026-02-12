@@ -1,0 +1,138 @@
+skill: env-dependency-extractor
+version: 1.0.0
+description: Evaluation test suite for environment variable and dependency extraction
+
+models_to_test:
+  - claude-3.5-sonnet
+  - claude-3-haiku
+
+test_cases:
+  - id: tc001_basic_extraction
+    description: "Skill extracts env vars and dependencies from current directory"
+    category: basic
+    priority: critical
+    input:
+      prompt: "/env-dependency-extractor"
+    expected_output:
+      must_contain:
+        - "totalEnvVars"
+        - "totalDependencies"
+        - "envVars"
+        - "dependencies"
+        - "qualityGates"
+        - "tier"
+      must_not_contain:
+        - "error"
+    validation:
+      schema_check: true
+
+  - id: tc002_specific_path
+    description: "Skill extracts from a specific path"
+    category: basic
+    priority: critical
+    input:
+      prompt: "/env-dependency-extractor path:src/"
+    expected_output:
+      must_contain:
+        - "targetPath"
+        - "envVars"
+        - "dependencies"
+    validation:
+      schema_check: true
+
+  - id: tc003_diff_mode
+    description: "Skill diffs env vars and deps against base branch"
+    category: diff
+    priority: critical
+    input:
+      prompt: "/env-dependency-extractor diff --base main"
+    expected_output:
+      must_contain:
+        - "changes"
+        - "added"
+        - "removed"
+        - "changed"
+    validation:
+      schema_check: true
+
+  - id: tc004_env_var_classification
+    description: "Env vars correctly classified by environment and secret status"
+    category: classification
+    priority: critical
+    input:
+      prompt: "/env-dependency-extractor"
+    expected_output:
+      must_contain:
+        - "isSecret"
+        - "environment"
+        - "service"
+        - "sources"
+    validation:
+      schema_check: true
+
+  - id: tc005_quality_gates
+    description: "Output includes AISP quality gate results with tier"
+    category: quality-gates
+    priority: critical
+    input:
+      prompt: "/env-dependency-extractor"
+    expected_output:
+      must_contain:
+        - "envCoverage"
+        - "dependencyTracking"
+        - "healthScore"
+        - "tier"
+        - "rulesPassed"
+    validation:
+      schema_check: true
+
+  - id: tc006_cross_service_issues
+    description: "Detects cross-service version mismatches and config issues"
+    category: analysis
+    priority: high
+    input:
+      prompt: "/env-dependency-extractor"
+    expected_output:
+      must_contain:
+        - "crossServiceIssues"
+        - "severity"
+        - "message"
+    validation:
+      schema_check: true
+
+  - id: tc007_external_services
+    description: "Discovers external service integrations"
+    category: completeness
+    priority: high
+    input:
+      prompt: "/env-dependency-extractor"
+    expected_output:
+      must_contain:
+        - "externalServices"
+        - "provider"
+        - "purpose"
+        - "envVars"
+    validation:
+      schema_check: true
+
+  - id: tc008_secret_audit
+    description: "Secret audit mode detects exposed secrets"
+    category: security
+    priority: high
+    input:
+      prompt: "/env-dependency-extractor --audit-secrets"
+    expected_output:
+      must_contain:
+        - "secretsFound"
+        - "isSecret"
+    validation:
+      schema_check: true
+
+success_criteria:
+  pass_rate: 0.9
+  critical_pass_rate: 1.0
+
+metadata:
+  author: "@pennyworth-tech"
+  created: "2026-02-12"
+  linear_issue: BL-246
