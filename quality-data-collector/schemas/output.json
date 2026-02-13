@@ -1,0 +1,212 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Quality Data Collection Output",
+  "description": "Structured output from quality-data-collector skill run",
+  "type": "object",
+  "required": ["collectedAt", "collectedBy", "gitRef", "gitBranch", "dataPoints"],
+  "properties": {
+    "collectedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of collection"
+    },
+    "collectedBy": {
+      "type": "string",
+      "enum": ["manual", "ci"],
+      "description": "How the data was collected"
+    },
+    "gitRef": {
+      "type": "string",
+      "description": "Git commit SHA"
+    },
+    "gitBranch": {
+      "type": "string",
+      "description": "Git branch name"
+    },
+    "dataPoints": {
+      "type": "object",
+      "required": [
+        "unitCoverage",
+        "integrationCoverage",
+        "uiUxTests",
+        "ciRuntime",
+        "qeCoverage",
+        "qeSecurity",
+        "qeCodeQuality",
+        "qeUxScore"
+      ],
+      "properties": {
+        "unitCoverage": {
+          "$ref": "#/definitions/coverageDataPoint"
+        },
+        "integrationCoverage": {
+          "$ref": "#/definitions/coverageDataPoint"
+        },
+        "uiUxTests": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "$ref": "#/definitions/status" },
+            "error": { "type": "string" },
+            "e2eTestFiles": { "type": "integer", "minimum": 0 },
+            "testCount": { "type": "integer", "minimum": 0 },
+            "userJourneys": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "ciRuntime": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "$ref": "#/definitions/status" },
+            "error": { "type": "string" },
+            "avgSeconds": { "type": "number", "minimum": 0 },
+            "minSeconds": { "type": "number", "minimum": 0 },
+            "maxSeconds": { "type": "number", "minimum": 0 },
+            "recentRuns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "integer" },
+                  "durationSeconds": { "type": "number" },
+                  "status": { "type": "string" },
+                  "conclusion": { "type": "string" },
+                  "createdAt": { "type": "string" },
+                  "updatedAt": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "qeCoverage": {
+          "$ref": "#/definitions/qeScoreDataPoint"
+        },
+        "qeSecurity": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "$ref": "#/definitions/status" },
+            "error": { "type": "string" },
+            "overallScore": { "type": "number", "minimum": 0, "maximum": 100 },
+            "critical": { "type": "integer", "minimum": 0 },
+            "high": { "type": "integer", "minimum": 0 },
+            "medium": { "type": "integer", "minimum": 0 },
+            "low": { "type": "integer", "minimum": 0 },
+            "topFindings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "severity": { "type": "string" },
+                  "title": { "type": "string" },
+                  "location": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "qeCodeQuality": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "$ref": "#/definitions/status" },
+            "error": { "type": "string" },
+            "overallScore": { "type": "number", "minimum": 0, "maximum": 100 },
+            "complexityHotspots": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "file": { "type": "string" },
+                  "complexity": { "type": "number" },
+                  "type": { "type": "string" }
+                }
+              }
+            },
+            "codeSmells": { "type": "integer", "minimum": 0 },
+            "techDebtMinutes": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "qeUxScore": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "$ref": "#/definitions/status" },
+            "error": { "type": "string" },
+            "overallScore": { "type": "number", "minimum": 0, "maximum": 100 },
+            "wcagLevel": { "type": "string" },
+            "issuesBySeverity": {
+              "type": "object",
+              "properties": {
+                "critical": { "type": "integer", "minimum": 0 },
+                "serious": { "type": "integer", "minimum": 0 },
+                "moderate": { "type": "integer", "minimum": 0 },
+                "minor": { "type": "integer", "minimum": 0 }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "status": {
+      "type": "string",
+      "enum": ["success", "error", "skipped"]
+    },
+    "coverageDataPoint": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "$ref": "#/definitions/status" },
+        "error": { "type": "string" },
+        "services": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "lines": { "type": "number", "minimum": 0, "maximum": 100 },
+              "branches": { "type": "number", "minimum": 0, "maximum": 100 },
+              "functions": { "type": "number", "minimum": 0, "maximum": 100 },
+              "statements": { "type": "integer", "minimum": 0 },
+              "testCount": { "type": "integer", "minimum": 0 },
+              "passCount": { "type": "integer", "minimum": 0 },
+              "failCount": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "qeScoreDataPoint": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "$ref": "#/definitions/status" },
+        "error": { "type": "string" },
+        "overallScore": { "type": "number", "minimum": 0, "maximum": 100 },
+        "perService": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "topGaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "area": { "type": "string" },
+              "coverage": { "type": "number" },
+              "risk": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
